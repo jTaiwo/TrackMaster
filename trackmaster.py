@@ -5,11 +5,19 @@ import time
 import random
 import pandas as pd
 from io import BytesIO
+import json
+import os
+from google.oauth2 import service_account
 
 # Function to authenticate and connect to Google Sheets
 def connect_to_sheets():
-    scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
-    creds = ServiceAccountCredentials.from_json_keyfile_name("service_cred.json", scope)
+    # Load the service account key from Streamlit secrets
+    service_account_info = json.loads(st.secrets["gcp"]["key"])
+    
+    # Create the credentials using the service account info
+    creds = service_account.Credentials.from_service_account_info(service_account_info)
+
+    # Authorize the gspread client with the credentials
     client = gspread.authorize(creds)
     return client
 
